@@ -1,8 +1,26 @@
+import { BrowserRouter, Routes, Route, useParams } from 'react-router-dom'
+import SyllabusPage from './pages/SyllabusPage'
+import ChapterPage from './pages/ChapterPage'
+import NotFoundPage from './pages/NotFoundPage'
+
+const VALID_BINS = ['content', 'questions']
+
+function ChapterBinGuard() {
+  const { bin } = useParams()
+  if (!VALID_BINS.includes(bin)) return <NotFoundPage />
+  return <ChapterPage />
+}
+
 function App() {
   return (
-    <div className="min-h-screen bg-gray-50">
-      <h1 className="text-3xl font-bold text-center py-8">Project PHYSICS</h1>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<SyllabusPage />} />
+        <Route path="/chapter/:id" element={<ChapterPage />} />
+        <Route path="/chapter/:id/:bin" element={<ChapterBinGuard />} />
+        <Route path="*" element={<NotFoundPage />} />
+      </Routes>
+    </BrowserRouter>
   )
 }
 
