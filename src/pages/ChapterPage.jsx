@@ -1,6 +1,7 @@
 import { useParams, useNavigate } from 'react-router-dom'
 import { CHAPTERS } from '../data/chapters/index'
 import NotFoundPage from './NotFoundPage'
+import ContentBin from '../components/ContentBin'
 
 function ChapterPage() {
   const { id, bin } = useParams()
@@ -56,7 +57,7 @@ function ChapterPage() {
       {/* Tab content */}
       <main className="max-w-3xl mx-auto px-6 py-8">
         {activeTab === 'content' && (
-          <div className="text-gray-400 text-sm">Content coming soon.</div>
+          <ContentBin content={chapter.content} />
         )}
         {activeTab === 'questions' && (
           <div className="text-gray-400 text-sm">Questions coming soon.</div>
