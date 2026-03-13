@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route, useParams } from 'react-router-dom'
+import Layout from './components/Layout'
 import SyllabusPage from './pages/SyllabusPage'
 import ChapterPage from './pages/ChapterPage'
 import NotFoundPage from './pages/NotFoundPage'
@@ -14,12 +15,14 @@ function ChapterBinGuard() {
 function App() {
   return (
     <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<SyllabusPage />} />
-        <Route path="/chapter/:id" element={<ChapterPage />} />
-        <Route path="/chapter/:id/:bin" element={<ChapterBinGuard />} />
-        <Route path="*" element={<NotFoundPage />} />
-      </Routes>
+      <Layout>
+        <Routes>
+          <Route path="/" element={<SyllabusPage />} />
+          <Route path="/chapter/:id" element={<ChapterPage />} />
+          <Route path="/chapter/:id/:bin" element={<ChapterBinGuard />} />
+          <Route path="*" element={<NotFoundPage />} />
+        </Routes>
+      </Layout>
     </BrowserRouter>
   )
 }
