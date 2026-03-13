@@ -1,3 +1,5 @@
+import { useState } from 'react'
+import { ChevronDown } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
 import remarkMath from 'remark-math'
 import rehypeKatex from 'rehype-katex'
@@ -19,7 +21,7 @@ function Objectives({ objectives }) {
         <li key={i} className="flex items-start gap-2.5">
           <input
             type="checkbox"
-            className="mt-0.5 h-4 w-4 shrink-0 rounded border-gray-300 text-gray-900 accent-gray-900"
+            className="mt-0.5 h-4 w-4 shrink-0 rounded border-gray-300 accent-gray-900"
             readOnly
           />
           <span className="text-sm text-gray-700 leading-snug">{obj}</span>
@@ -30,11 +32,6 @@ function Objectives({ objectives }) {
 }
 
 function Notes({ notes }) {
-  if (!notes) {
-    return (
-      <p className="text-sm text-gray-400 italic">Content coming soon.</p>
-    )
-  }
   return (
     <div className="prose prose-sm prose-gray max-w-none">
       <Md>{notes}</Md>
@@ -104,22 +101,59 @@ function Diagrams({ diagrams }) {
 }
 
 function Subsection({ subsection }) {
+  const [open, setOpen] = useState(false)
+
+  const isEmpty =
+    !subsection.notes &&
+    subsection.examples.length === 0 &&
+    subsection.diagrams.length === 0
+
   return (
-    <section className="mb-10">
-      <h2 className="text-lg font-semibold text-gray-900 mb-3 pb-2 border-b border-gray-200">
-        {subsection.title}
-      </h2>
-      <Objectives objectives={subsection.objectives} />
-      <Notes notes={subsection.notes} />
-      <Examples examples={subsection.examples} />
-      <Diagrams diagrams={subsection.diagrams} />
-    </section>
+    <div className="border-b border-gray-200 last:border-b-0">
+      {/* Title bar */}
+      <button
+        onClick={() => setOpen((prev) => !prev)}
+        className="w-full flex items-center justify-between px-1 py-4 text-left hover:bg-gray-100 transition-colors rounded-sm"
+      >
+        <span className="text-sm font-semibold text-gray-900">
+          {subsection.title}
+        </span>
+        <ChevronDown
+          size={16}
+          className="shrink-0 text-gray-400 transition-transform duration-300"
+          style={{ transform: open ? 'rotate(180deg)' : 'rotate(0deg)' }}
+        />
+      </button>
+
+      {/* Collapsible body */}
+      <div
+        style={{
+          maxHeight: open ? '2000px' : '0px',
+          opacity: open ? 1 : 0,
+          overflow: 'hidden',
+          transition: 'max-height 0.3s ease, opacity 0.3s ease',
+        }}
+      >
+        <div className="px-1 pb-6">
+          <Objectives objectives={subsection.objectives} />
+          {isEmpty ? (
+            <p className="text-sm text-gray-400 italic">Content coming soon.</p>
+          ) : (
+            <>
+              <Notes notes={subsection.notes} />
+              <Examples examples={subsection.examples} />
+              <Diagrams diagrams={subsection.diagrams} />
+            </>
+          )}
+        </div>
+      </div>
+    </div>
   )
 }
 
 function ContentBin({ content }) {
   return (
-    <div>
+    <div className="rounded-xl border border-gray-200 bg-white divide-y divide-gray-200 overflow-hidden">
       {content.subsections.map((subsection) => (
         <Subsection key={subsection.id} subsection={subsection} />
       ))}
