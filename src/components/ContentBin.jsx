@@ -9,25 +9,41 @@ const MD_PLUGINS = {
   rehypePlugins: [rehypeKatex],
 }
 
+const ACCENT_COLOURS = [
+  '#6366f1', // indigo
+  '#0ea5e9', // sky
+  '#10b981', // emerald
+  '#f59e0b', // amber
+  '#ef4444', // red
+  '#8b5cf6', // violet
+]
+
 function Md({ children }) {
   return <ReactMarkdown {...MD_PLUGINS}>{children}</ReactMarkdown>
 }
 
-function Objectives({ objectives }) {
+function Objectives({ objectives, colour }) {
   if (!objectives.length) return null
   return (
-    <ul className="mb-4 space-y-1.5">
-      {objectives.map((obj, i) => (
-        <li key={i} className="flex items-start gap-2.5">
-          <input
-            type="checkbox"
-            className="mt-0.5 h-4 w-4 shrink-0 rounded border-gray-300 accent-gray-900"
-            readOnly
-          />
-          <span className="text-sm text-gray-700 leading-snug">{obj}</span>
-        </li>
-      ))}
-    </ul>
+    <div className="mb-4">
+      <p
+        className="text-xs font-bold tracking-widest uppercase mb-2"
+        style={{ color: colour }}
+      >
+        Learning Objectives
+      </p>
+      <ul className="space-y-1.5">
+        {objectives.map((obj, i) => (
+          <li key={i} className="flex items-start gap-2.5">
+            <span
+              className="mt-1.5 w-1.5 h-1.5 rounded-full shrink-0"
+              style={{ backgroundColor: colour }}
+            />
+            <span className="text-sm text-gray-600 leading-snug">{obj}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
   )
 }
 
@@ -100,8 +116,11 @@ function Diagrams({ diagrams }) {
   )
 }
 
-function Subsection({ subsection }) {
+function Subsection({ subsection, index }) {
   const [open, setOpen] = useState(false)
+
+  const colour = ACCENT_COLOURS[index % ACCENT_COLOURS.length]
+  const number = subsection.title.split(' ')[0]
 
   const isEmpty =
     !subsection.notes &&
@@ -109,19 +128,28 @@ function Subsection({ subsection }) {
     subsection.diagrams.length === 0
 
   return (
-    <div className="border-b border-gray-200 last:border-b-0">
+    <div
+      className="mb-4 rounded-xl shadow-md bg-white overflow-hidden"
+      style={{ borderLeft: `4px solid ${colour}` }}
+    >
       {/* Title bar */}
       <button
         onClick={() => setOpen((prev) => !prev)}
-        className="w-full flex items-center justify-between px-1 py-4 text-left hover:bg-gray-100 transition-colors rounded-sm"
+        className="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-gray-50 transition-colors duration-150 cursor-pointer"
       >
-        <span className="text-sm font-semibold text-gray-900">
-          {subsection.title}
-        </span>
+        <div className="flex items-center gap-3">
+          <span
+            className="rounded-full px-2.5 py-0.5 text-sm font-bold shrink-0"
+            style={{ backgroundColor: `${colour}22`, color: colour }}
+          >
+            {number}
+          </span>
+          <span className="text-base font-semibold text-gray-800">
+            {subsection.title.slice(number.length + 1)}
+          </span>
+        </div>
         <ChevronDown
-          size={16}
-          className="shrink-0 text-gray-400 transition-transform duration-300"
-          style={{ transform: open ? 'rotate(180deg)' : 'rotate(0deg)' }}
+          className={`w-5 h-5 text-gray-400 shrink-0 transition-transform duration-300 ${open ? 'rotate-180' : ''}`}
         />
       </button>
 
@@ -134,10 +162,13 @@ function Subsection({ subsection }) {
           transition: 'max-height 0.3s ease, opacity 0.3s ease',
         }}
       >
-        <div className="px-1 pb-6">
-          <Objectives objectives={subsection.objectives} />
+        <div className="px-5 pb-5 pt-2">
+          <div className="border-t border-gray-100 mb-4" />
+          <Objectives objectives={subsection.objectives} colour={colour} />
           {isEmpty ? (
-            <p className="text-sm text-gray-400 italic">Content coming soon.</p>
+            <p className="text-sm text-gray-400 italic text-center py-2">
+              📖 Content coming soon.
+            </p>
           ) : (
             <>
               <Notes notes={subsection.notes} />
@@ -153,9 +184,9 @@ function Subsection({ subsection }) {
 
 function ContentBin({ content }) {
   return (
-    <div className="rounded-xl border border-gray-200 bg-white divide-y divide-gray-200 overflow-hidden">
-      {content.subsections.map((subsection) => (
-        <Subsection key={subsection.id} subsection={subsection} />
+    <div className="max-w-3xl mx-auto">
+      {content.subsections.map((subsection, index) => (
+        <Subsection key={subsection.id} subsection={subsection} index={index} />
       ))}
     </div>
   )
