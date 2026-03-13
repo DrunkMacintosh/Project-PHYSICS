@@ -9,26 +9,19 @@ const MD_PLUGINS = {
   rehypePlugins: [rehypeKatex],
 }
 
-const ACCENT_COLOURS = [
-  '#6366f1', // indigo
-  '#0ea5e9', // sky
-  '#10b981', // emerald
-  '#f59e0b', // amber
-  '#ef4444', // red
-  '#8b5cf6', // violet
-]
+const ACCENT = '#1a1a2e'
 
 function Md({ children }) {
   return <ReactMarkdown {...MD_PLUGINS}>{children}</ReactMarkdown>
 }
 
-function Objectives({ objectives, colour }) {
+function Objectives({ objectives }) {
   if (!objectives.length) return null
   return (
     <div className="mb-4">
       <p
         className="text-xs font-bold tracking-widest uppercase mb-2"
-        style={{ color: colour }}
+        style={{ color: ACCENT }}
       >
         Learning Objectives
       </p>
@@ -37,7 +30,7 @@ function Objectives({ objectives, colour }) {
           <li key={i} className="flex items-start gap-2.5">
             <span
               className="mt-1.5 w-1.5 h-1.5 rounded-full shrink-0"
-              style={{ backgroundColor: colour }}
+              style={{ backgroundColor: ACCENT }}
             />
             <span className="text-sm text-gray-600 leading-snug">{obj}</span>
           </li>
@@ -116,10 +109,9 @@ function Diagrams({ diagrams }) {
   )
 }
 
-function Subsection({ subsection, index }) {
+function Subsection({ subsection }) {
   const [open, setOpen] = useState(false)
 
-  const colour = ACCENT_COLOURS[index % ACCENT_COLOURS.length]
   const number = subsection.title.split(' ')[0]
 
   const isEmpty =
@@ -130,7 +122,7 @@ function Subsection({ subsection, index }) {
   return (
     <div
       className="mb-4 rounded-xl shadow-md bg-white overflow-hidden"
-      style={{ borderLeft: `4px solid ${colour}` }}
+      style={{ borderLeft: '4px solid #1a1a2e' }}
     >
       {/* Title bar */}
       <button
@@ -140,7 +132,7 @@ function Subsection({ subsection, index }) {
         <div className="flex items-center gap-3">
           <span
             className="rounded-full px-2.5 py-0.5 text-sm font-bold shrink-0"
-            style={{ backgroundColor: `${colour}22`, color: colour }}
+            style={{ backgroundColor: '#1a1a2e22', color: '#1a1a2e' }}
           >
             {number}
           </span>
@@ -164,7 +156,7 @@ function Subsection({ subsection, index }) {
       >
         <div className="px-5 pb-5 pt-2">
           <div className="border-t border-gray-100 mb-4" />
-          <Objectives objectives={subsection.objectives} colour={colour} />
+          <Objectives objectives={subsection.objectives} />
           {isEmpty ? (
             <p className="text-sm text-gray-400 italic text-center py-2">
               📖 Content coming soon.
@@ -185,8 +177,8 @@ function Subsection({ subsection, index }) {
 function ContentBin({ content }) {
   return (
     <div className="max-w-3xl mx-auto">
-      {content.subsections.map((subsection, index) => (
-        <Subsection key={subsection.id} subsection={subsection} index={index} />
+      {content.subsections.map((subsection) => (
+        <Subsection key={subsection.id} subsection={subsection} />
       ))}
     </div>
   )
