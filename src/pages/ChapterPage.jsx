@@ -7,8 +7,12 @@ function ChapterPage() {
   const { id, bin } = useParams()
   const navigate = useNavigate()
 
-  const chapter = CHAPTERS.find((ch) => ch.id === Number(id))
-  if (!chapter) return <NotFoundPage />
+  const chapterIndex = CHAPTERS.findIndex((ch) => ch.id === Number(id))
+  if (chapterIndex === -1) return <NotFoundPage />
+
+  const chapter = CHAPTERS[chapterIndex]
+  const prev = CHAPTERS[chapterIndex - 1] ?? null
+  const next = CHAPTERS[chapterIndex + 1] ?? null
 
   const hasQuestions = chapter.questions.length > 0
   const activeTab = bin ?? 'content'
@@ -18,27 +22,27 @@ function ChapterPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-gray-900 text-white px-6 py-10">
+    <div className="bg-gray-50 min-h-[calc(100vh-3.5rem)] flex flex-col">
+      {/* Page hero */}
+      <div className="bg-[#1a1a2e] text-white px-6 py-10">
         <div className="max-w-3xl mx-auto">
           <button
             onClick={() => navigate('/')}
-            className="text-xs font-semibold uppercase tracking-widest text-gray-400 hover:text-gray-200 transition-colors mb-3 flex items-center gap-1"
+            className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-widest text-indigo-300 hover:text-white transition-colors mb-4"
           >
-            ← Physics
+            ← All Chapters
           </button>
-          <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-1">
+          <p className="text-xs font-semibold uppercase tracking-widest text-indigo-300 mb-1">
             Chapter {chapter.id}
           </p>
           <h1 className="text-2xl font-bold tracking-tight">{chapter.title}</h1>
-          <p className="text-gray-400 mt-2 text-sm leading-relaxed">{chapter.summary}</p>
+          <p className="text-indigo-200/70 mt-2 text-sm leading-relaxed">{chapter.summary}</p>
         </div>
-      </header>
+      </div>
 
       {/* Tab bar */}
       <div className="bg-white border-b border-gray-200">
-        <div className="max-w-3xl mx-auto px-6 flex gap-0">
+        <div className="max-w-3xl mx-auto px-6 flex">
           <TabButton
             label="Content"
             active={activeTab === 'content'}
@@ -55,14 +59,29 @@ function ChapterPage() {
       </div>
 
       {/* Tab content */}
-      <main className="max-w-3xl mx-auto px-6 py-8">
-        {activeTab === 'content' && (
-          <ContentBin content={chapter.content} />
-        )}
+      <main className="max-w-3xl mx-auto w-full px-6 py-8 flex-1">
+        {activeTab === 'content' && <ContentBin content={chapter.content} />}
         {activeTab === 'questions' && (
           <div className="text-gray-400 text-sm">Questions coming soon.</div>
         )}
       </main>
+
+      {/* Prev / Next navigation */}
+      <div className="border-t border-gray-200 bg-white">
+        <div className="max-w-3xl mx-auto px-6 py-4 flex items-center justify-between gap-4">
+          <NavButton
+            label={prev ? `← Ch ${prev.id}. ${prev.title}` : '← Previous'}
+            disabled={!prev}
+            onClick={() => prev && navigate(`/chapter/${prev.id}/content`)}
+          />
+          <NavButton
+            label={next ? `Ch ${next.id}. ${next.title} →` : 'Next →'}
+            disabled={!next}
+            align="right"
+            onClick={() => next && navigate(`/chapter/${next.id}/content`)}
+          />
+        </div>
+      </div>
     </div>
   )
 }
@@ -74,8 +93,26 @@ function TabButton({ label, active, onClick }) {
       className={[
         'px-5 py-3 text-sm font-medium border-b-2 transition-colors',
         active
-          ? 'border-gray-900 text-gray-900'
+          ? 'border-[#1a1a2e] text-gray-900'
           : 'border-transparent text-gray-500 hover:text-gray-700',
+      ].join(' ')}
+    >
+      {label}
+    </button>
+  )
+}
+
+function NavButton({ label, disabled, align = 'left', onClick }) {
+  return (
+    <button
+      onClick={onClick}
+      disabled={disabled}
+      className={[
+        'text-sm font-medium max-w-[45%] truncate transition-colors',
+        align === 'right' ? 'text-right ml-auto' : '',
+        disabled
+          ? 'text-gray-300 cursor-not-allowed'
+          : 'text-gray-600 hover:text-gray-900',
       ].join(' ')}
     >
       {label}

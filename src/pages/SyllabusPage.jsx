@@ -35,18 +35,18 @@ function ChapterCard({ chapter }) {
 
 function SyllabusPage() {
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-gray-900 text-white px-6 py-10">
+    <div className="bg-gray-50 min-h-[calc(100vh-3.5rem)]">
+      <div className="bg-[#1a1a2e] text-white px-6 py-10">
         <div className="max-w-5xl mx-auto">
-          <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-1">
-            A-Level
+          <p className="text-xs font-semibold uppercase tracking-widest text-indigo-300 mb-1">
+            Syllabus
           </p>
-          <h1 className="text-3xl font-bold tracking-tight">Physics</h1>
-          <p className="text-gray-400 mt-1 text-sm">
-            {CHAPTERS.length} chapters &mdash; select one to begin
+          <h1 className="text-3xl font-bold tracking-tight">All Chapters</h1>
+          <p className="text-indigo-200/70 mt-1 text-sm">
+            {CHAPTERS.length} chapters — select one to begin
           </p>
         </div>
-      </header>
+      </div>
 
       <main className="max-w-5xl mx-auto px-6 py-8">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
